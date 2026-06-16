@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Fashion Zone — Pakistan's Premier Fashion Destination</title>
+<meta name="description" content="The Fashion Zone — Men, Women & Kids Fashion. Clothes, Accessories, Sunglasses, Jewellery. Cash on Delivery across Pakistan.">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --black:#0A0A0A;
+  --rich:#111111;
+  --card:#161616;
+  --gold:#C9A84C;
+  --gold-lt:#E2C97E;
+  --gold-dim:rgba(201,168,76,0.15);
+  --white:#FFFFFF;
+  --offwhite:#F5F0E8;
+  --muted:rgba(255,255,255,0.45);
+  --border:rgba(201,168,76,0.2);
+}
+
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--black);color:var(--white);overflow-x:hidden}
+
+/* ── LOADER ── */
+#loader{position:fixed;inset:0;background:var(--black);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;transition:opacity 0.6s}
+#loader.hide{opacity:0;pointer-events:none}
+.loader-logo{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--gold);letter-spacing:0.08em}
+.loader-bar{width:160px;height:1px;background:rgba(201,168,76,0.2);position:relative;overflow:hidden}
+.loader-bar::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--gold);animation:load 1.4s ease forwards}
+@keyframes load{to{left:0}}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;width:100%;z-index:100;transition:all 0.4s}
+nav.scrolled{background:rgba(10,10,10,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:72px}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--white);text-decoration:none;letter-spacing:0.04em}
+.logo span{color:var(--gold)}
+.nav-links{display:flex;gap:36px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:0.8rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.2s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width 0.3s}
+.nav-links a:hover{color:var(--white)}
+.nav-links a:hover::after{width:100%}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-wa{display:flex;align-items:center;gap:8px;background:var(--gold);color:var(--black);padding:9px 22px;border-radius:2px;font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;transition:opacity 0.2s}
+.nav-wa:hover{opacity:0.85}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.hamburger span{width:22px;height:1.5px;background:var(--white);transition:all 0.3s}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:100px 32px 80px}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(201,168,76,0.08) 0%,transparent 70%)}
+.hero-lines{position:absolute;inset:0;background-image:linear-gradient(rgba(201,168,76,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.04) 1px,transparent 1px);background-size:80px 80px}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:900px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:12px;margin-bottom:32px}
+.hero-line{width:40px;height:1px;background:var(--gold)}
+.hero-eyebrow span{font-size:0.72rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold)}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,9vw,7.5rem);font-weight:700;line-height:0.95;margin-bottom:28px;letter-spacing:-0.01em}
+.hero h1 .line1{display:block;color:var(--white)}
+.hero h1 .line2{display:block;color:var(--gold);font-style:italic}
+.hero h1 .line3{display:block;color:var(--white)}
+.hero-sub{font-size:1rem;color:var(--muted);max-width:480px;margin:0 auto 44px;line-height:1.8;font-weight:300}
+.hero-ctas{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.cta-gold{background:var(--gold);color:var(--black);padding:15px 36px;font-weight:700;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border-radius:2px;transition:all 0.25s}
+.cta-gold:hover{background:var(--gold-lt);transform:translateY(-2px)}
+.cta-ghost{border:1px solid var(--border);color:var(--white);padding:15px 36px;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border-radius:2px;transition:all 0.25s}
+.cta-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.hero-trust{display:flex;gap:40px;justify-content:center;margin-top:64px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:10px}
+.trust-dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.trust-item span{font-size:0.78rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase}
+
+/* ── MARQUEE ── */
+.marquee-wrap{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 0;overflow:hidden;background:var(--rich)}
+.marquee-track{display:flex;gap:56px;white-space:nowrap;animation:ticker 25s linear infinite}
+.marquee-track span{font-size:0.72rem;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);flex-shrink:0}
+.marquee-track .sep{color:rgba(201,168,76,0.3)}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── SHARED SECTION STYLES ── */
+.sec{max-width:1280px;margin:0 auto;padding:100px 32px}
+.sec-label{font-size:0.7rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;color:var(--white);line-height:1.1;margin-bottom:16px}
+.sec-sub{font-size:0.95rem;color:var(--muted);max-width:440px;line-height:1.8;font-weight:300}
+
+/* ── CATEGORIES ── */
+.cats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:56px}
+.cat-item{background:var(--card);padding:36px 28px;cursor:pointer;transition:all 0.3s;border:1px solid transparent;text-decoration:none;display:block}
+.cat-item:hover{border-color:var(--border);background:#1A1A1A}
+.cat-item:hover .cat-arrow{transform:translateX(4px);opacity:1}
+.cat-emoji{font-size:2rem;margin-bottom:18px;display:block}
+.cat-name{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--white);margin-bottom:6px}
+.cat-desc{font-size:0.78rem;color:var(--muted);letter-spacing:0.04em}
+.cat-arrow{display:inline-block;color:var(--gold);margin-top:14px;opacity:0;transition:all 0.3s;font-size:0.85rem}
+
+/* ── PRODUCTS ── */
+.products-wrap{background:var(--rich);padding:100px 0}
+.products-inner{max-width:1280px;margin:0 auto;padding:0 32px}
+.products-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:40px;flex-wrap:wrap;gap:20px}
+.view-all{font-size:0.78rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);text-decoration:none;border-bottom:1px solid var(--border);padding-bottom:3px;transition:border-color 0.2s}
+.view-all:hover{border-color:var(--gold)}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:36px}
+.ftab{padding:8px 20px;font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:1px;transition:all 0.2s;font-family:'Inter',sans-serif}
+.ftab:hover,.ftab.on{background:var(--gold);color:var(--black);border-color:var(--gold)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2px}
+.pcard{background:var(--card);position:relative;overflow:hidden;transition:all 0.3s}
+.pcard:hover{transform:translateY(-4px)}
+.pcard:hover .pcard-overlay{opacity:1}
+.pimg{aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;overflow:hidden}
+.pimg-bg1{background:linear-gradient(145deg,#1a1a2e,#2d1b3d)}
+.pimg-bg2{background:linear-gradient(145deg,#1a2a1a,#0d3b0d)}
+.pimg-bg3{background:linear-gradient(145deg,#2a1a1a,#3d0d0d)}
+.pimg-bg4{background:linear-gradient(145deg,#1a2a2a,#0d2d3d)}
+.pimg-bg5{background:linear-gradient(145deg,#2a2a1a,#3d3d0d)}
+.pimg-bg6{background:linear-gradient(145deg,#2a1a2a,#3d0d3d)}
+.pbadge{position:absolute;top:14px;left:14px;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;padding:5px 12px;text-transform:uppercase}
+.pbadge.sale{background:var(--gold);color:var(--black)}
+.pbadge.new{background:var(--white);color:var(--black)}
+.pbadge.hot{background:#C0392B;color:var(--white)}
+.pcard-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s}
+.quick-wa{background:var(--gold);color:var(--black);padding:11px 24px;font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;border-radius:2px}
+.pinfo{padding:20px 20px 24px}
+.pcat{font-size:0.68rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.pname{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--white);margin-bottom:12px;font-weight:600}
+.pprice{display:flex;align-items:baseline;gap:10px}
+.pnow{font-size:1.1rem;font-weight:700;color:var(--white)}
+.pold{font-size:0.85rem;color:var(--muted);text-decoration:line-through}
+.pwa{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;padding:11px;background:transparent;border:1px solid var(--border);color:var(--white);font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all 0.25s;font-family:'Inter',sans-serif}
+.pwa:hover{background:var(--gold);color:var(--black);border-color:var(--gold)}
+
+/* ── FEATURED BANNER ── */
+.banner-wrap{padding:0 0 100px}
+.banner{max-width:1280px;margin:0 auto;padding:0 32px}
+.banner-inner{background:var(--card);border:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+.banner-left{padding:72px 60px;display:flex;flex-direction:column;justify-content:center}
+.banner-tag{font-size:0.68rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.banner-title{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:700;color:var(--white);line-height:1.1;margin-bottom:20px}
+.banner-title em{font-style:italic;color:var(--gold)}
+.banner-text{font-size:0.92rem;color:var(--muted);line-height:1.8;margin-bottom:36px;font-weight:300}
+.banner-feats{display:flex;flex-direction:column;gap:14px;margin-bottom:40px}
+.bfeat{display:flex;align-items:center;gap:14px;font-size:0.88rem;color:rgba(255,255,255,0.7)}
+.bfeat-icon{width:32px;height:32px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0}
+.banner-right{display:flex;align-items:center;justify-content:center;font-size:10rem;background:linear-gradient(135deg,#1a1520,#0f1a0f);padding:60px}
+
+/* ── PROCESS ── */
+.process-wrap{background:var(--rich);padding:100px 0}
+.process-inner{max-width:1280px;margin:0 auto;padding:0 32px}
+.process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:56px;position:relative}
+.process-steps::before{content:'';position:absolute;top:28px;left:12.5%;right:12.5%;height:1px;background:var(--border);z-index:0}
+.step{text-align:center;padding:0 20px;position:relative;z-index:1}
+.step-num{width:56px;height:56px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--gold);background:var(--black);font-weight:700}
+.step-title{font-weight:700;font-size:0.9rem;color:var(--white);margin-bottom:8px;letter-spacing:0.04em}
+.step-text{font-size:0.8rem;color:var(--muted);line-height:1.6}
+
+/* ── REVIEWS ── */
+.reviews-wrap{padding:100px 0}
+.reviews-inner{max-width:1280px;margin:0 auto;padding:0 32px}
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:56px}
+.review-card{background:var(--card);padding:32px 28px;border:1px solid transparent;transition:border-color 0.3s}
+.review-card:hover{border-color:var(--border)}
+.stars{color:var(--gold);font-size:0.9rem;margin-bottom:16px;letter-spacing:2px}
+.review-text{font-size:0.9rem;color:rgba(255,255,255,0.7);line-height:1.8;margin-bottom:20px;font-style:italic}
+.reviewer{display:flex;align-items:center;gap:12px}
+.rev-avatar{width:38px;height:38px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem}
+.rev-name{font-weight:600;font-size:0.85rem;color:var(--white)}
+.rev-city{font-size:0.75rem;color:var(--muted)}
+
+/* ── STATS ── */
+.stats-wrap{background:var(--gold);padding:70px 32px}
+.stats-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:40px;text-align:center}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:700;color:var(--black);line-height:1}
+.stat-label{font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(0,0,0,0.6);margin-top:8px}
+
+/* ── ADD PRODUCT ── */
+.add-wrap{background:var(--rich);padding:100px 0}
+.add-inner{max-width:900px;margin:0 auto;padding:0 32px}
+.add-form{background:var(--card);border:1px solid var(--border);padding:52px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:36px}
+.fg{display:flex;flex-direction:column;gap:8px}
+.fg.full{grid-column:1/-1}
+.fg label{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold)}
+.fg input,.fg select,.fg textarea{background:#0f0f0f;border:1px solid rgba(255,255,255,0.1);color:var(--white);padding:13px 16px;font-size:0.9rem;font-family:'Inter',sans-serif;border-radius:0;transition:border-color 0.2s;outline:none}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold)}
+.fg select option{background:var(--black)}
+.fg textarea{resize:vertical;min-height:110px}
+.upload-zone{border:1px dashed rgba(201,168,76,0.3);padding:40px;text-align:center;cursor:pointer;transition:border-color 0.2s;background:#0a0a0a}
+.upload-zone:hover{border-color:var(--gold)}
+.upload-icon{font-size:2.4rem;margin-bottom:12px}
+.upload-zone p{font-size:0.82rem;color:var(--muted)}
+.add-btn{background:var(--gold);color:var(--black);padding:15px 40px;border:none;font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;margin-top:28px;transition:opacity 0.2s;border-radius:0}
+.add-btn:hover{opacity:0.85}
+
+/* ── FOOTER ── */
+footer{background:var(--rich);border-top:1px solid var(--border);padding:80px 32px 36px}
+.footer-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--white);margin-bottom:16px}
+.footer-brand span{color:var(--gold)}
+.footer-desc{font-size:0.85rem;color:var(--muted);line-height:1.8;margin-bottom:28px;font-weight:300}
+.footer-wa-btn{display:inline-flex;align-items:center;gap:10px;background:#25D366;color:var(--white);padding:12px 24px;font-size:0.8rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:opacity 0.2s}
+.footer-wa-btn:hover{opacity:0.88}
+.footer-col h4{font-size:0.7rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.footer-col ul li a{font-size:0.85rem;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.footer-col ul li a:hover{color:var(--white)}
+.footer-bottom{max-width:1280px;margin:48px auto 0;padding-top:28px;border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-bottom p{font-size:0.78rem;color:rgba(255,255,255,0.25)}
+
+/* ── WA FLOAT ── */
+.wa-float{position:fixed;bottom:30px;right:30px;z-index:200;width:60px;height:60px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:1.6rem;text-decoration:none;box-shadow:0 0 0 0 rgba(37,211,102,0.5);animation:wa-pulse 2s infinite}
+@keyframes wa-pulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,0.5)}70%{box-shadow:0 0 0 14px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:110px;right:30px;z-index:300;background:var(--gold);color:var(--black);padding:14px 24px;font-weight:700;font-size:0.85rem;letter-spacing:0.04em;transform:translateY(20px);opacity:0;transition:all 0.3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ── MOBILE MENU ── */
+.mobile-nav{display:none;position:fixed;top:72px;left:0;right:0;background:rgba(10,10,10,0.98);backdrop-filter:blur(20px);z-index:99;padding:24px 32px;border-bottom:1px solid var(--border);flex-direction:column;gap:20px}
+.mobile-nav.open{display:flex}
+.mobile-nav a{color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s}
+.mobile-nav a:hover{color:var(--gold)}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(30px);transition:all 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .cats-grid{grid-template-columns:repeat(2,1fr)}
+  .process-steps{grid-template-columns:repeat(2,1fr);gap:32px}
+  .process-steps::before{display:none}
+  .reviews-grid{grid-template-columns:repeat(2,1fr)}
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  .footer-inner{grid-template-columns:1fr 1fr}
+  .banner-inner{grid-template-columns:1fr}
+  .banner-right{display:none}
+}
+@media(max-width:768px){
+  .nav-links,.nav-wa{display:none}
+  .hamburger{display:flex}
+  .hero h1{font-size:3rem}
+  .cats-grid{grid-template-columns:repeat(2,1fr)}
+  .pgrid{grid-template-columns:repeat(2,1fr)}
+  .fgrid{grid-template-columns:1fr}
+  .add-form{padding:28px 20px}
+  .banner-left{padding:40px 28px}
+  .reviews-grid{grid-template-columns:1fr}
+  .footer-inner{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .cats-grid{grid-template-columns:1fr}
+  .pgrid{grid-template-columns:1fr}
+  .stats-inner{grid-template-columns:repeat(2,1fr);gap:24px}
+  .hero-trust{gap:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">The Fashion Zone</div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="logo">The <span>Fashion</span> Zone</a>
+    <ul class="nav-links">
+      <li><a href="#categories">Categories</a></li>
+      <li><a href="#products">Shop</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#add">Add Product</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="https://wa.me/923000000000" class="nav-wa" target="_blank">🟢 Order Now</a>
+      <div class="hamburger" id="burger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#categories" onclick="toggleMenu()">Categories</a>
+  <a href="#products" onclick="toggleMenu()">Shop</a>
+  <a href="#how" onclick="toggleMenu()">How It Works</a>
+  <a href="#reviews" onclick="toggleMenu()">Reviews</a>
+  <a href="#add" onclick="toggleMenu()">Add Product</a>
+  <a href="https://wa.me/923000000000" target="_blank" style="color:var(--gold)">🟢 WhatsApp Order</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="hero-line"></div>
+      <span>Pakistan's Premier Fashion Destination</span>
+      <div class="hero-line"></div>
+    </div>
+    <h1>
+      <span class="line1">Dress for</span>
+      <span class="line2">Every Moment</span>
+      <span class="line3">Every Person</span>
+    </h1>
+    <p class="hero-sub">Men, Women & Kids Fashion — Clothes, Accessories, Sunglasses, Jewellery & More. Delivered to your door across all of Pakistan.</p>
+    <div class="hero-ctas">
+      <a href="#products" class="cta-gold">Explore Collection</a>
+      <a href="https://wa.me/923000000000" class="cta-ghost" target="_blank">💬 WhatsApp Order</a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item"><div class="trust-dot"></div><span>Cash on Delivery</span></div>
+      <div class="trust-item"><div class="trust-dot"></div><span>Free Delivery on Rs 3000+</span></div>
+      <div class="trust-item"><div class="trust-dot"></div><span>7-Day Returns</span></div>
+      <div class="trust-item"><div class="trust-dot"></div><span>100% Authentic</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>Women's Fashion</span><span class="sep">◆</span>
+    <span>Men's Wear</span><span class="sep">◆</span>
+    <span>Kids Collection</span><span class="sep">◆</span>
+    <span>Sunglasses</span><span class="sep">◆</span>
+    <span>Jewellery</span><span class="sep">◆</span>
+    <span>Handbags</span><span class="sep">◆</span>
+    <span>Shoes & Sandals</span><span class="sep">◆</span>
+    <span>Cash on Delivery</span><span class="sep">◆</span>
+    <span>Nationwide Delivery</span><span class="sep">◆</span>
+    <span>Women's Fashion</span><span class="sep">◆</span>
+    <span>Men's Wear</span><span class="sep">◆</span>
+    <span>Kids Collection</span><span class="sep">◆</span>
+    <span>Sunglasses</span><span class="sep">◆</span>
+    <span>Jewellery</span><span class="sep">◆</span>
+    <span>Handbags</span><span class="sep">◆</span>
+    <span>Shoes & Sandals</span><span class="sep">◆</span>
+    <span>Cash on Delivery</span><span class="sep">◆</span>
+    <span>Nationwide Delivery</span><span class="sep">◆</span>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div id="categories">
+<div class="sec reveal">
+  <div class="sec-label">Shop By Category</div>
+  <div class="sec-title">Everything Fashion,<br>All in One Place</div>
+  <div class="cats-grid" style="margin-top:56px">
+    <a class="cat-item reveal" href="#products" onclick="filterP('women')">
+      <span class="cat-emoji">👗</span>
+      <div class="cat-name">Women's Wear</div>
+      <div class="cat-desc">Suits · Kurtis · Frocks · Dupatta</div>
+      <div class="cat-arrow">Browse →</div>
+    </a>
+    <a class="cat-item reveal" href="#products" onclick="filterP('men')">
+      <span class="cat-emoji">👔</span>
+      <div class="cat-name">Men's Wear</div>
+      <div class="cat-desc">Kurtas · Shirts · Trousers</div>
+      <div class="cat-arrow">Browse →</div>
+    </a>
+    <a class="cat-item reveal" href="#products" onclick="filterP('glasses')">
+      <span class="cat-emoji">🕶️</span>
+      <div class="cat-name">Sunglasses</div>
+      <div class="cat-desc">Women's · Men's · UV400 Protection</div>
+      <div class="cat-arrow">Browse →</div>
+    </a>
+    <a class="cat-item reveal" href="#products" onclick="filterP('jewelry')">
+      <span class="cat-emoji">💎</span>
+      <div class="cat-name">Jewellery</div>
+      <div class="cat-desc">Earrings · Necklaces · Rings</div>
+      <div class="cat-arrow">Browse →</div>
+    </a>
+    <a class="cat-item reveal" href="#products" onclick="filterP('bags')">
+      <span class="cat-emoji">👜</span>
+      <div class="cat-name">Handbags & Purses</div>
+      <div class="cat-desc">Shoulder · Clutch · Tote</div>
+      <div class="cat-arrow">Browse →</div>
+    </a>
+    <a class="cat-item reveal" href="#products" onclick="filterP('kids')">
+      <span class="cat-emoji">🧒</span>
+      <div class="cat-name">Kids Wear</div>
+      <div class="cat-desc">Boys · Girls · All Ages</div>
+      <div class="cat-arrow">Browse →</div>
+    </a>
+    <a class="cat-item reveal" href="#products" onclick="filterP('shoes')">
+      <span class="cat-emoji">👠</span>
+      <div class="cat-name">Shoes & Sandals</div>
+      <div class="cat-desc">Heels · Flats · Chappals</div>
+      <div class="cat-arrow">Browse →</div>
+    </a>
+    <a class="cat-item reveal" href="#products" onclick="filterP('all')">
+      <span class="cat-emoji">✨</span>
+      <div class="cat-name">Accessories</div>
+      <div class="cat-desc">Caps · Belts · Hair Accessories</div>
+      <div class="cat-arrow">Browse →</div>
+    </a>
+  </div>
+</div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="products-wrap" id="products">
+<div class="products-inner">
+  <div class="products-header reveal">
+    <div>
+      <div class="sec-label">New Arrivals</div>
+      <div class="sec-title">Latest Collection</div>
+    </div>
+    <a href="https://wa.me/923000000000?text=Show me full catalogue" class="view-all" target="_blank">Full Catalogue →</a>
+  </div>
+  <div class="filter-row reveal">
+    <button class="ftab on" onclick="setFtab(this,'all')">All</button>
+    <button class="ftab" onclick="setFtab(this,'women')">Women</button>
+    <button class="ftab" onclick="setFtab(this,'men')">Men</button>
+    <button class="ftab" onclick="setFtab(this,'glasses')">Sunglasses</button>
+    <button class="ftab" onclick="setFtab(this,'jewelry')">Jewellery</button>
+    <button class="ftab" onclick="setFtab(this,'bags')">Bags</button>
+    <button class="ftab" onclick="setFtab(this,'kids')">Kids</button>
+    <button class="ftab" onclick="setFtab(this,'shoes')">Shoes</button>
+  </div>
+  <div class="pgrid" id="pgrid">
+
+    <div class="pcard reveal" data-c="women">
+      <div class="pimg pimg-bg1"><span class="pbadge sale">SALE</span>👗</div>
+      <div class="pcard-overlay"><a href="https://wa.me/923000000000?text=Order: Embroidered Lawn 3-Piece Suit" class="quick-wa" target="_blank">Order on WhatsApp</a></div>
+      <div class="pinfo">
+        <div class="pcat">Women's Wear</div>
+        <div class="pname">Embroidered Lawn 3-Piece Suit</div>
+        <div class="pprice"><span class="pnow">Rs 2,800</span><span class="pold">Rs 3,500</span></div>
+        <a href="https://wa.me/923000000000?text=Order: Embroidered Lawn 3-Piece Suit" class="pwa" target="_blank">🟢 WhatsApp Order</a>
+      </div>
+    </div>
+
+    <div class="pcard reveal" data-c="glasses">
+      <div class="pimg pimg-bg2"><span class="pbadge hot">HOT</span>🕶️</div>
+      <div class="pcard-overlay"><a href="https://wa.me/923000000000?text=Order: Designer Sunglasses UV400" class="quick-wa" target="_blank">Order on WhatsApp</a></div>
+      <div class="pinfo">
+        <div class="pcat">Sunglasses</div>
+        <div class="pname">Designer Sunglasses — UV400</div>
+        <div class="pprice"><span class="pnow">Rs 950</span><span class="pold">Rs 1,500</span></div>
+        <a href="https://wa.me/923000000000?text=Order: Designer Sunglasses UV400" class="pwa" target="_blank">🟢 WhatsApp Order</a>
+      </div>
+    </div>
+
+    <div class="pcard reveal" data-c="jewelry">
+      <div class="pimg pimg-bg3"><span class="pbadge new">NEW</span>💍</div>
+      <div class="pcard-overlay"><a href="https://wa.me/923000000000?text=Order: Gold Plated Earrings Set" class="quick-wa" target="_blank">Order on WhatsApp</a></div>
+      <div class="pinfo">
+        <div class="pcat">Jewellery</div>
+        <div class="pname">Gold Plated Earrings Set</div>
+        <div class="pprice"><span class="pnow">Rs 650</span><span class="pold">Rs 900</span></div>
+        <a href="https://wa.me/923000000000?text=Order: Gold Plated Earrings Set" class="pwa" target="_blank">🟢 WhatsApp Order</a>
+      </div>
+    </div>
+
+    <div class="pcard reveal" data-c="men">
+      <div class="pimg pimg-bg4"><span class="pbadge new">NEW</span>👔</div>
+      <div class="pcard-overlay"><a href="https://wa.me/923000000000?text=Order: Cotton Printed Kurta" class="quick-wa" target="_blank">Order on WhatsApp</a></div>
+      <div class="pinfo">
+        <div class="pcat">Men's Wear</div>
+        <div class="pname">Cotton Printed Kurta</div>
+        <div class="pprice"><span class="pnow">Rs 1,200</span><span class="pold">Rs 1,600</span></div>
+        <a href="https://wa.me/923000000000?text=Order: Cotton Printed Kurta" class="pwa" target="_blank">🟢 WhatsApp Order</a>
+      </div>
+    </div>
+
+    <div class="pcard reveal" data-c="bags">
+      <div class="pimg pimg-bg5">👜</div>
+      <div class="pcard-overlay"><a href="https://wa.me/923000000000?text=Order: Premium Ladies Shoulder Bag" class="quick-wa" target="_blank">Order on WhatsApp</a></div>
+      <div class="pinfo">
+        <div class="pcat">Handbags</div>
+        <div class="pname">Premium Ladies Shoulder Bag</div>
+        <div class="pprice"><span class="pnow">Rs 1,800</span><span class="pold">Rs 2,500</span></div>
+        <a href="https://wa.me/923000000000?text=Order: Premium Ladies Shoulder Bag" class="pwa" target="_blank">🟢 WhatsApp Order</a>
+      </div>
+    </div>
+
+    <div class="pcard reveal" data-c="kids">
+      <div class="pimg pimg-bg6"><span class="pbadge sale">SALE</span>🧒</div>
+      <div class="pcard-overlay"><a href="https://wa.me/923000000000?text=Order: Girls Party Frock" class="quick-wa" target="_blank">Order on WhatsApp</a></div>
+      <div class="pinfo">
+        <div class="pcat">Kids Wear</div>
+        <div class="pname">Girls Party Frock — Age 3–10</div>
+        <div class="pprice"><span class="pnow">Rs 1,400</span><span class="pold">Rs 1,900</span></div>
+        <a href="https://wa.me/923000000000?text=Order: Girls Party Frock" class="pwa" target="_blank">🟢 WhatsApp Order</a>
+      </div>
+    </div>
+
+    <div class="pcard reveal" data-c="shoes">
+      <div class="pimg pimg-bg1"><span class="pbadge new">NEW</span>👠</div>
+      <div class="pcard-overlay"><a href="https://wa.me/923000000000?text=Order: Ladies Block Heel Sandals" class="quick-wa" target="_blank">Order on WhatsApp</a></div>
+      <div class="pinfo">
+        <div class="pcat">Shoes</div>
+        <div class="pname">Ladies Block Heel Sandals</div>
+        <div class="pprice"><span class="pnow">Rs 1,600</span><span class="pold">Rs 2,200</span></div>
+        <a href="https://wa.me/923000000000?text=Order: Ladies Block Heel Sandals" class="pwa" target="_blank">🟢 WhatsApp Order</a>
+      </div>
+    </div>
+
+    <div class="pcard reveal" data-c="women">
+      <div class="pimg pimg-bg3"><span class="pbadge hot">HOT</span>🧣</div>
+      <div class="pcard-overlay"><a href="https://wa.me/923000000000?text=Order: Wool Embroidered Shawl" class="quick-wa" target="_blank">Order on WhatsApp</a></div>
+      <div class="pinfo">
+        <div class="pcat">Women's Wear</div>
+        <div class="pname">Wool Embroidered Shawl</div>
+        <div class="pprice"><span class="pnow">Rs 3,200</span><span class="pold">Rs 4,500</span></div>
+        <a href="https://wa.me/923000000000?text=Order: Wool Embroidered Shawl" class="pwa" target="_blank">🟢 WhatsApp Order</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- BANNER -->
+<div class="banner-wrap">
+<div class="banner reveal">
+  <div class="banner-inner">
+    <div class="banner-left">
+      <div class="banner-tag">✦ Delivered Across Pakistan</div>
+      <div class="banner-title">Fashion for <em>Every</em><br>Corner of Pakistan</div>
+      <p class="banner-text">From Karachi to Khyber, Lahore to Muzaffarabad — we deliver to every city, town, and village. Order today, receive at your door.</p>
+      <div class="banner-feats">
+        <div class="bfeat"><div class="bfeat-icon">🚚</div>TCS · Leopards · Rider — Nationwide</div>
+        <div class="bfeat"><div class="bfeat-icon">💵</div>Cash on Delivery — Pay on receipt</div>
+        <div class="bfeat"><div class="bfeat-icon">🔄</div>7-day hassle-free returns</div>
+        <div class="bfeat"><div class="bfeat-icon">📦</div>Safe & secure packaging</div>
+      </div>
+      <a href="https://wa.me/923000000000" class="cta-gold" target="_blank">Order on WhatsApp</a>
+    </div>
+    <div class="banner-right">🇵🇰</div>
+  </div>
+</div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="process-wrap" id="how">
+<div class="process-inner">
+  <div class="sec-label reveal">Simple Process</div>
+  <div class="sec-title reveal">How to Order</div>
+  <div class="process-steps">
+    <div class="step reveal">
+      <div class="step-num">1</div>
+      <div class="step-title">Browse & Choose</div>
+      <div class="step-text">Pick your favourite item from our collection — clothes, accessories, or anything you like</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">2</div>
+      <div class="step-title">WhatsApp Us</div>
+      <div class="step-text">Send us the product name on WhatsApp — we'll confirm availability and price instantly</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">3</div>
+      <div class="step-title">Give Your Address</div>
+      <div class="step-text">Share your delivery address anywhere in Pakistan — we'll book your parcel the same day</div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">4</div>
+      <div class="step-title">Pay on Delivery</div>
+      <div class="step-text">Receive your order and pay cash — no advance payment, no risk, just fashion</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- REVIEWS -->
+<div class="reviews-wrap" id="reviews">
+<div class="reviews-inner">
+  <div class="sec-label reveal">Customer Reviews</div>
+  <div class="sec-title reveal">What People Are Saying</div>
+  <div class="reviews-grid">
+    <div class="review-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Bahut acha service hai. Maine lawn suit order kiya tha — bilkul waise hi mila jaisa picture mein tha. COD bhi available tha, bohot asaan raha."</p>
+      <div class="reviewer"><div class="rev-avatar">👩</div><div><div class="rev-name">Sana Malik</div><div class="rev-city">Lahore</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Sunglasses liye the — quality zabardast thi. Price bhi market se kam tha. Delivery 3 din mein aa gayi. Definitely recommend karunga!"</p>
+      <div class="reviewer"><div class="rev-avatar">👨</div><div><div class="rev-name">Ahmed Hassan</div><div class="rev-city">Karachi</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Bache ke liye frock mangwai — bohot khubsoorat thi. Packaging bhi achi thi. WhatsApp par response bhi fast tha. Again order karungi!"</p>
+      <div class="reviewer"><div class="rev-avatar">👩</div><div><div class="rev-name">Fatima Bibi</div><div class="rev-city">Islamabad</div></div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- STATS -->
+<div class="stats-wrap reveal">
+<div class="stats-inner">
+  <div class="stat"><div class="stat-num" data-target="1200">0</div><div class="stat-label">Happy Customers</div></div>
+  <div class="stat"><div class="stat-num" data-target="500">0</div><div class="stat-label">Products Available</div></div>
+  <div class="stat"><div class="stat-num" data-target="100">0</div><div class="stat-label">% Authentic</div></div>
+  <div class="stat"><div class="stat-num" data-target="7">0</div><div class="stat-label">Day Returns</div></div>
+</div>
+</div>
+
+<!-- ADD PRODUCT -->
+<div class="add-wrap" id="add">
+<div class="add-inner">
+  <div class="sec-label reveal">Seller Panel</div>
+  <div class="sec-title reveal">Add New Product</div>
+  <p class="sec-sub reveal" style="margin-bottom:36px">Easily add any fashion item — clothes, glasses, bags, jewellery, shoes — anything!</p>
+  <div class="add-form reveal">
+    <div class="fgrid">
+      <div class="fg">
+        <label>Product Name</label>
+        <input type="text" placeholder="e.g. Embroidered Lawn Suit" id="pname-inp">
+      </div>
+      <div class="fg">
+        <label>Category</label>
+        <select id="pcat-inp">
+          <option>Women's Wear</option>
+          <option>Men's Wear</option>
+          <option>Sunglasses</option>
+          <option>Jewellery</option>
+          <option>Handbags</option>
+          <option>Kids Wear</option>
+          <option>Shoes & Sandals</option>
+          <option>Accessories</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Selling Price (Rs)</label>
+        <input type="number" placeholder="2500" id="pprice-inp">
+      </div>
+      <div class="fg">
+        <label>Original Price (Rs)</label>
+        <input type="number" placeholder="3500" id="pprice-old-inp">
+      </div>
+      <div class="fg">
+        <label>Stock Quantity</label>
+        <input type="number" placeholder="20">
+      </div>
+      <div class="fg">
+        <label>Badge</label>
+        <select id="pbadge-inp">
+          <option value="">None</option>
+          <option value="new">NEW</option>
+          <option value="sale">SALE</option>
+          <option value="hot">HOT</option>
+        </select>
+      </div>
+      <div class="fg full">
+        <label>Description</label>
+        <textarea placeholder="Material, sizes, colors, care instructions..."></textarea>
+      </div>
+      <div class="fg full">
+        <label>Product Image</label>
+        <div class="upload-zone" onclick="document.getElementById('img-inp').click()">
+          <div class="upload-icon">📸</div>
+          <p>Click to upload photo<br><small style="color:rgba(255,255,255,0.25)">JPG or PNG — Max 5MB</small></p>
+          <input type="file" id="img-inp" accept="image/*" style="display:none" onchange="previewImage(event)">
+        </div>
+        <div id="img-preview" style="margin-top:12px"></div>
+      </div>
+      <div class="fg full">
+        <label>WhatsApp Number</label>
+        <input type="tel" value="923000000000" placeholder="923001234567" id="pwa-inp">
+      </div>
+    </div>
+    <button class="add-btn" onclick="addProd()">Add Product to Store ✦</button>
+  </div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">The <span>Fashion</span> Zone</div>
+      <p class="footer-desc">Pakistan's premier fashion destination for men, women, and kids. Authentic products, Cash on Delivery, delivered to every corner of Pakistan.</p>
+      <a href="https://wa.me/923000000000" class="footer-wa-btn" target="_blank">💬 WhatsApp Us Now</a>
+    </div>
+    <div class="footer-col">
+      <h4>Categories</h4>
+      <ul>
+        <li><a href="#">Women's Wear</a></li>
+        <li><a href="#">Men's Wear</a></li>
+        <li><a href="#">Sunglasses</a></li>
+        <li><a href="#">Jewellery</a></li>
+        <li><a href="#">Handbags</a></li>
+        <li><a href="#">Kids Wear</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Information</h4>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Delivery Policy</a></li>
+        <li><a href="#">Return Policy</a></li>
+        <li><a href="#">Size Guide</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="https://wa.me/923000000000" target="_blank">WhatsApp</a></li>
+        <li><a href="#">Facebook Page</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Muzaffarabad, AJK</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 The Fashion Zone. All Rights Reserved.</p>
+    <p>Made with ❤️ in Pakistan 🇵🇰</p>
+  </div>
+</footer>
+
+<!-- WA Float -->
+<a href="https://wa.me/923000000000" class="wa-float" target="_blank">💬</a>
+
+<!-- Toast -->
+<div class="toast" id="toast">✦ Product Added Successfully!</div>
+
+<script>
+// Loader
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.getElementById('loader').classList.add('hide');
+  },1600);
+});
+
+// Navbar scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',scrollY>50);
+});
+
+// Mobile menu
+function toggleMenu(){
+  document.getElementById('mobileNav').classList.toggle('open');
+}
+
+// Scroll reveal
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible')}});
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Counter animation
+const cobs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const nums=e.target.querySelectorAll('[data-target]');
+      nums.forEach(n=>{
+        const target=+n.dataset.target;
+        let cur=0;
+        const step=target/60;
+        const t=setInterval(()=>{
+          cur+=step;
+          if(cur>=target){cur=target;clearInterval(t);}
+          n.textContent=Math.floor(cur)+(target===100?'%':target===7?'':'+');
+        },20);
+      });
+      cobs.unobserve(e.target);
+    }
+  });
+},{threshold:0.5});
+const sw=document.querySelector('.stats-wrap');
+if(sw)cobs.observe(sw);
+
+// Filter products
+function setFtab(el,cat){
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  filterP(cat);
+}
+function filterP(cat){
+  document.querySelectorAll('.pcard').forEach(c=>{
+    c.style.display=(cat==='all'||c.dataset.c===cat)?'block':'none';
+  });
+  if(cat!=='all')document.getElementById('products').scrollIntoView({behavior:'smooth'});
+}
+
+// Image preview
+function previewImage(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    document.getElementById('img-preview').innerHTML=
+      `<img src="${ev.target.result}" style="max-width:180px;border:1px solid var(--border);">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Add product
+function addProd(){
+  const name=document.getElementById('pname-inp').value;
+  if(!name){alert('Please enter a product name');return;}
+  showToast('✦ '+name+' Added!');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const tgt=document.querySelector(a.getAttribute('href'));
+    if(tgt){e.preventDefault();tgt.scrollIntoView({behavior:'smooth'});}
+  });
+});
+</script>
+</body>
+</html>
