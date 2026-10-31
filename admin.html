@@ -29,6 +29,27 @@ button:disabled{opacity:.6;cursor:wait}
 .acts{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
 .acts a{text-decoration:none;font-weight:700;font-size:.9rem;padding:7px 14px;border-radius:999px;background:var(--gold);color:var(--plum)}
 .acts a.w{background:#25d366;color:#fff}
+.acts{align-items:center}
+.acts button{padding:7px 14px;font-size:.9rem}
+.codl{display:flex;align-items:center;gap:6px;font-size:.88rem;color:var(--mute)}
+input.cod{flex:none;min-width:0;width:90px;padding:6px 8px}
+input.sel{flex:none;min-width:0;width:18px;height:18px;padding:0}
+#printArea{display:none}
+@page{size:A4;margin:10mm}
+@media print{
+  header,main{display:none!important}
+  body{background:#fff}
+  #printArea{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+  .lbl{border:2px solid #000;padding:6mm;color:#000;break-inside:avoid;page-break-inside:avoid;font-family:Arial,Helvetica,sans-serif}
+  .lcod{font-size:15pt;font-weight:800;border:2px solid #000;padding:2mm 3mm;margin-bottom:4mm;text-align:center}
+  .lt{font-size:9pt;font-weight:700;letter-spacing:.1em}
+  .ln{font-size:19pt;font-weight:800;line-height:1.15}
+  .lp{font-size:17pt;font-weight:800;margin:1mm 0 3mm}
+  .la{font-size:14pt;line-height:1.3}
+  .lc{font-size:17pt;font-weight:800;margin:2mm 0 4mm}
+  .lprod{font-size:10pt;border-top:1px dashed #000;padding-top:2mm}
+  .lf{font-size:8.5pt;margin-top:3mm}
+}
 </style>
 </head>
 <body>
@@ -40,14 +61,15 @@ button:disabled{opacity:.6;cursor:wait}
   </form>
   <p class="msg" id="msg" role="status">Enter your secret code to see the orders.</p>
   <div id="tools" hidden>
-    <div class="bar"><input id="q" placeholder="Search name, phone or city" aria-label="Search orders"><button type="button" class="alt" id="re">Refresh</button></div>
+    <div class="bar"><input id="q" placeholder="Search name, phone or city" aria-label="Search orders"><button type="button" class="alt" id="re">Refresh</button><button type="button" class="alt" id="all">Select all</button><button type="button" id="prn">Print selected labels</button></div>
     <div class="sum" id="sum"></div>
   </div>
   <div id="list"></div>
+<div id="printArea"></div>
 </main>
 <script>
 const ENDPOINT="https://script.google.com/macros/s/AKfycbzhSKDeXf1uvD0Ev5YHi6VwPas3UDcsBtpXmv4oEmbhGAtZlXVCajSH_bj9zPIpCYw/exec";
-let ROWS=[],HEAD=[],CODE="";
+let ROWS=[],HEAD=[],CODE="",ENTRIES=[];
 const $=s=>document.querySelector(s);
 const money=n=>"Rs "+Number(n||0).toLocaleString("en-US");
 function wa(p){let d=String(p).replace(/\D/g,"");if(d.startsWith("0"))d="92"+d.slice(1);return "https://wa.me/"+d}
@@ -55,7 +77,7 @@ function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className
 function render(){
   const q=$("#q").value.trim().toLowerCase(),list=$("#list");list.textContent="";
   const col=n=>HEAD.indexOf(n);
-  let shown=0,total=0;
+  let shown=0,total=0;ENTRIES=[];
   ROWS.forEach(r=>{
     const o={date:r[col("Date")],name:r[col("Name")],phone:r[col("Phone")],city:r[col("City")],addr:r[col("Address")],prod:r[col("Product")],note:r[col("Note")],qty:r[col("Qty")],tot:r[col("Total")],st:r[col("Status")]};
     if(q&&!(String(o.name)+" "+o.phone+" "+o.city).toLowerCase().includes(q))return;
@@ -68,11 +90,37 @@ function render(){
       el("div","row",o.phone));
     const a=el("div","acts"),call=el("a","","Call"),w=el("a","w","WhatsApp");
     call.href="tel:"+String(o.phone).replace(/[^\d+]/g,"");w.href=wa(o.phone);w.target="_blank";w.rel="noopener";
-    a.append(call,w);c.append(a);list.append(c);
+    a.append(call,w);
+    const chk=document.createElement("input");chk.type="checkbox";chk.className="sel";
+    const sl=el("label","codl","");sl.append(chk,document.createTextNode(" Select"));
+    const codIn=document.createElement("input");codIn.type="number";codIn.min="0";codIn.className="cod";codIn.value=Number(o.tot)||0;codIn.setAttribute("aria-label","Cash to collect in rupees");
+    const cl=el("label","codl","Cash to collect Rs");cl.append(codIn);
+    const pb=el("button","alt","Print label");pb.type="button";
+    const entry={o,chk,codIn};ENTRIES.push(entry);
+    pb.addEventListener("click",()=>printLabels([entry]));
+    a.append(sl,cl,pb);c.append(a);list.append(c);
   });
   $("#sum").textContent="";
   $("#sum").append(el("span","","Orders: "+shown),el("span","","Total: "+money(total)));
   if(!shown)list.append(el("p","msg","No orders to show yet."));
+}
+function printLabels(list){
+  if(!list.length){alert("Select at least one order first.");return}
+  const area=$("#printArea");area.textContent="";
+  list.forEach(({o,codIn})=>{
+    const cod=Number(codIn.value)||0,l=el("div","lbl");
+    l.append(
+      el("div","lcod",cod>0?"CASH ON DELIVERY: "+money(cod):"NO CASH TO COLLECT"),
+      el("div","lt","DELIVER TO"),
+      el("div","ln",o.name||""),
+      el("div","lp",o.phone||""),
+      el("div","la",o.addr||""),
+      el("div","lc",String(o.city||"").toUpperCase()),
+      el("div","lprod",(o.prod||"")+" x "+(o.qty||1)),
+      el("div","lf","FROM: Climax Fashion Zone, Muzaffarabad AJK | WhatsApp 0337 5940711"));
+    area.append(l);
+  });
+  window.print();
 }
 async function load(){
   const msg=$("#msg"),btn=$("#go");
@@ -91,6 +139,8 @@ async function load(){
 }
 $("#f").addEventListener("submit",e=>{e.preventDefault();load()});
 $("#re").addEventListener("click",load);
+$("#all").addEventListener("click",()=>{const on=ENTRIES.some(e=>!e.chk.checked);ENTRIES.forEach(e=>e.chk.checked=on)});
+$("#prn").addEventListener("click",()=>printLabels(ENTRIES.filter(e=>e.chk.checked)));
 $("#q").addEventListener("input",render);
 </script>
 </body>

@@ -111,6 +111,13 @@ button.ord:disabled{opacity:.6;cursor:wait}
 #odmsg{margin:10px 0 18px;color:var(--ink)}
 #odmsg a{color:var(--rose);font-weight:700}
 @media(max-width:560px){#of{grid-template-columns:1fr}}
+.ob{position:absolute;top:12px;left:12px;z-index:2;background:#d4183d;color:#fff;border-radius:12px;padding:6px 12px;display:flex;flex-direction:column;line-height:1.15;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.ob b{font-size:1.1rem}.ob small{font-size:.7rem;font-weight:600;letter-spacing:.02em}
+.feat .fm,.mainw{position:relative}
+.pb{display:flex;flex-direction:column;gap:2px;margin:4px 0 14px}
+.was{font-size:1.2rem;font-weight:600;color:#3b2d47;text-decoration:line-through;text-decoration-thickness:2px}
+.off{color:#d4183d;font-weight:800;font-size:1rem}
+.pb .now{font-size:1.9rem;line-height:1.1;color:var(--plum)}
 </style>
 </head>
 <body>
@@ -145,7 +152,7 @@ button.ord:disabled{opacity:.6;cursor:wait}
 </div></footer>
 <div class="modal" id="modal" hidden><div class="mbox" role="dialog" aria-modal="true" aria-label="Product photos and details">
   <button type="button" class="x" id="mx" aria-label="Close">&times;</button>
-  <div class="mg"><div class="mainw" id="mainw"><img id="mimg" alt=""></div><div class="mth" id="mth"></div></div>
+  <div class="mg"><div class="mainw" id="mainw"><img id="mimg" alt=""><span id="mbadge"></span></div><div class="mth" id="mth"></div></div>
   <div class="mi"><div class="zoom" id="zoom"></div><div id="minfo"></div></div>
 </div></div>
 <div class="modal" id="omodal" hidden><div class="obox" role="dialog" aria-modal="true" aria-label="Order form">
@@ -223,6 +230,15 @@ const money=n=>"Rs "+Number(n).toLocaleString("en-US");
 const wa=t=>"https://wa.me/"+WA_NUMBER+(t?"?text="+encodeURIComponent(t):"");
 const over=p=>p.offerEnds&&Date.now()>new Date(p.offerEnds+"T23:59:59+05:00").getTime();
 const price=p=>over(p)&&p.oldPrice?p.oldPrice:p.price;
+const isSale=p=>!over(p)&&p.oldPrice&&p.oldPrice>p.price;
+const pct=p=>Math.round((p.oldPrice-p.price)/p.oldPrice*100);
+function priceBlock(p,now,sale){
+  if(!sale)return '<div class="pr"><b>'+money(now)+'</b></div>';
+  return '<div class="pb"><span class="was">Was '+money(p.oldPrice)+'</span><span class="off">'+pct(p)+'% OFF - You save '+money(p.oldPrice-p.price)+'</span><b class="now">Now '+money(now)+'</b></div>';
+}
+function offerBadge(p){
+  return isSale(p)?'<span class="ob"><b>'+pct(p)+'% OFF</b><small>Limited offer</small></span>':"";
+}
 const catName=id=>(CATEGORIES.find(c=>c.id===id)||{name:id}).name;
 let active="all";
 
@@ -233,7 +249,7 @@ function renderFeatured(){
   const p=PRODUCTS[0],el=$("#feat");
   if(!p){el.style.display="none";return}
   const im=p.images||[];el.dataset.open=0;
-  el.innerHTML=(im[0]?'<span class="fm"><img src="'+im[0]+'" alt="'+esc(p.name)+'"></span>':"")+
+  el.innerHTML=(im[0]?'<span class="fm"><img src="'+im[0]+'" alt="'+esc(p.name)+'">'+offerBadge(p)+'</span>':"")+
     '<div><b>'+esc(p.name)+'</b><span>'+money(price(p))+'</span></div>'+
     (im.length>1?'<div class="fs">'+im.slice(1,5).map(s=>'<img src="'+s+'" alt="">').join("")+'</div>':"");
 }
@@ -250,10 +266,10 @@ function renderChips(){
 function card(p,i){
   const imgs=p.images||[],now=price(p),sale=!over(p)&&p.oldPrice&&p.oldPrice>p.price;
   return '<article class="card"><button type="button" class="ph" data-open="'+i+'" aria-label="View photos of '+esc(p.name)+'">'+(imgs[0]?'<img src="'+imgs[0]+'" alt="'+esc(p.name)+'" data-main>':"")+
-    (p.badge&&!over(p)?'<span class="badge">'+esc(p.badge)+'</span>':"")+'</button>'+
+    (sale?offerBadge(p):(p.badge&&!over(p)?'<span class="badge">'+esc(p.badge)+'</span>':""))+'</button>'+
     (imgs.length>1?'<div class="th">'+imgs.map((s,k)=>'<button type="button" data-p="'+i+'" data-k="'+k+'" aria-label="Photo '+(k+1)+'"'+(k===0?' aria-current="true"':"")+'><img src="'+s+'" alt=""></button>').join("")+'</div>':"")+
     '<div class="body"><span class="cat">'+esc(catName(p.category))+'</span><div class="name">'+esc(p.name)+'</div>'+
-    '<div class="pr"><b>'+money(now)+'</b>'+(sale?'<s>'+money(p.oldPrice)+'</s><em>Save '+money(p.oldPrice-p.price)+'</em>':"")+'</div>'+
+    priceBlock(p,now,sale)+
     '<button type="button" class="ord" data-order="'+i+'">Order now</button></div></article>';
 }
 function renderGrid(){
@@ -290,11 +306,11 @@ function openModal(i){
   const im=p.images||[],now=price(p),sale=!over(p)&&p.oldPrice&&p.oldPrice>p.price;
   $("#mth").innerHTML=im.map((s,k)=>'<button type="button" data-k="'+k+'" aria-label="Photo '+(k+1)+'"><img src="'+s+'" alt=""></button>').join("");
   $("#minfo").innerHTML='<span class="cat">'+esc(catName(p.category))+'</span><h3>'+esc(p.name)+'</h3>'+
-    '<div class="pr"><b>'+money(now)+'</b>'+(sale?'<s>'+money(p.oldPrice)+'</s><em>Save '+money(p.oldPrice-p.price)+'</em>':"")+'</div>'+
+    priceBlock(p,now,sale)+
     (p.offerEnds&&!over(p)?'<span class="note">Offer ends '+new Date(p.offerEnds+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})+'</span>':"")+
     (p.desc?'<ul>'+p.desc.map(d=>'<li>'+esc(d)+'</li>').join("")+'</ul>':"")+
     '<button type="button" class="ord" data-order="'+i+'">Order now</button>';
-  $("#modal").hidden=false;document.body.style.overflow="hidden";
+  $("#mbadge").innerHTML=offerBadge(p);$("#modal").hidden=false;document.body.style.overflow="hidden";
   showImg(0);$("#mx").focus();
 }
 function closeModal(){$("#modal").hidden=true;document.body.style.overflow="";if(lastFocus)lastFocus.focus()}
