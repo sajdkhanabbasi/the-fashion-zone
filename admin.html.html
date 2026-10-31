@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Orders | Climax Fashion Zone</title>
+<style>
+:root{--plum:#2b1238;--bg:#f7f1fa;--gold:#f5b13d;--rose:#e8456b;--ink:#1e1126;--mute:#6d5e78;--line:#e3d7ea;--serif:Georgia,"Times New Roman",serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+header{background:var(--plum);color:#fff;padding:16px 20px;font-family:var(--serif);font-style:italic;font-size:1.3rem}
+main{max-width:900px;margin:0 auto;padding:20px}
+:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+input{flex:1;min-width:160px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:#fff}
+button{border:0;border-radius:10px;padding:10px 18px;font:inherit;font-weight:700;background:var(--plum);color:#fff;cursor:pointer}
+button.alt{background:#fff;color:var(--plum);border:1.5px solid var(--line)}
+button:disabled{opacity:.6;cursor:wait}
+.msg{min-height:1.4em;margin-bottom:12px;color:var(--mute)}
+.msg.err{color:#c0283f}
+.sum{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px;font-weight:600}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.top b{font-family:var(--serif);font-size:1.1rem}
+.top span{color:var(--mute);font-size:.88rem}
+.row{color:var(--ink);font-size:.95rem}
+.row small{color:var(--mute)}
+.acts{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.acts a{text-decoration:none;font-weight:700;font-size:.9rem;padding:7px 14px;border-radius:999px;background:var(--gold);color:var(--plum)}
+.acts a.w{background:#25d366;color:#fff}
+</style>
+</head>
+<body>
+<header>Climax Fashion Zone | Orders</header>
+<main>
+  <form class="bar" id="f">
+    <input id="code" type="password" placeholder="Secret code" autocomplete="off" aria-label="Secret code">
+    <button type="submit" id="go">Show orders</button>
+  </form>
+  <p class="msg" id="msg" role="status">Enter your secret code to see the orders.</p>
+  <div id="tools" hidden>
+    <div class="bar"><input id="q" placeholder="Search name, phone or city" aria-label="Search orders"><button type="button" class="alt" id="re">Refresh</button></div>
+    <div class="sum" id="sum"></div>
+  </div>
+  <div id="list"></div>
+</main>
+<script>
+const ENDPOINT="https://script.google.com/macros/s/AKfycbzhSKDeXf1uvD0Ev5YHi6VwPas3UDcsBtpXmv4oEmbhGAtZlXVCajSH_bj9zPIpCYw/exec";
+let ROWS=[],HEAD=[],CODE="";
+const $=s=>document.querySelector(s);
+const money=n=>"Rs "+Number(n||0).toLocaleString("en-US");
+function wa(p){let d=String(p).replace(/\D/g,"");if(d.startsWith("0"))d="92"+d.slice(1);return "https://wa.me/"+d}
+function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+function render(){
+  const q=$("#q").value.trim().toLowerCase(),list=$("#list");list.textContent="";
+  const col=n=>HEAD.indexOf(n);
+  let shown=0,total=0;
+  ROWS.forEach(r=>{
+    const o={date:r[col("Date")],name:r[col("Name")],phone:r[col("Phone")],city:r[col("City")],addr:r[col("Address")],prod:r[col("Product")],note:r[col("Note")],qty:r[col("Qty")],tot:r[col("Total")],st:r[col("Status")]};
+    if(q&&!(String(o.name)+" "+o.phone+" "+o.city).toLowerCase().includes(q))return;
+    shown++;total+=Number(o.tot)||0;
+    const c=el("div","card"),t=el("div","top");
+    t.append(el("b","",o.name||"(no name)"),el("span","",o.date?new Date(o.date).toLocaleString("en-GB"):""));
+    c.append(t,
+      el("div","row",o.prod+" x "+o.qty+"  |  "+money(o.tot)+(o.note?"  |  "+o.note:"")),
+      el("div","row",o.city+", "+o.addr),
+      el("div","row",o.phone));
+    const a=el("div","acts"),call=el("a","","Call"),w=el("a","w","WhatsApp");
+    call.href="tel:"+String(o.phone).replace(/[^\d+]/g,"");w.href=wa(o.phone);w.target="_blank";w.rel="noopener";
+    a.append(call,w);c.append(a);list.append(c);
+  });
+  $("#sum").textContent="";
+  $("#sum").append(el("span","","Orders: "+shown),el("span","","Total: "+money(total)));
+  if(!shown)list.append(el("p","msg","No orders to show yet."));
+}
+async function load(){
+  const msg=$("#msg"),btn=$("#go");
+  CODE=$("#code").value.trim();
+  if(!CODE){msg.className="msg err";msg.textContent="Please enter your secret code.";return}
+  btn.disabled=true;msg.className="msg";msg.textContent="Loading...";
+  try{
+    const res=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"list",code:CODE})});
+    const data=await res.json();
+    if(!data.ok){msg.className="msg err";msg.textContent=data.error==="denied"?"Wrong code.":"Could not read the Sheet. Check the script.";return}
+    HEAD=data.head;ROWS=data.rows;
+    msg.textContent="";$("#tools").hidden=false;render();
+  }catch(e){
+    msg.className="msg err";msg.textContent="Could not reach the order system. Check your internet or VPN and try again.";
+  }finally{btn.disabled=false}
+}
+$("#f").addEventListener("submit",e=>{e.preventDefault();load()});
+$("#re").addEventListener("click",load);
+$("#q").addEventListener("input",render);
+</script>
+</body>
+</html>
