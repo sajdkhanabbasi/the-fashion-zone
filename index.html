@@ -118,10 +118,20 @@ button.ord:disabled{opacity:.6;cursor:wait}
 .was{font-size:1.2rem;font-weight:600;color:#3b2d47;text-decoration:line-through;text-decoration-thickness:2px}
 .off{color:#d4183d;font-weight:800;font-size:1rem}
 .pb .now{font-size:1.9rem;line-height:1.1;color:var(--plum)}
+.top.offer{background:#d4183d;color:#fff;font-size:1rem;padding:10px 12px;line-height:1.35}
+.top.offer b{font-weight:800}.top.offer s{opacity:.85}
+.ob{border:2px solid #fff}
+.ob b{font-size:1.3rem}
+.feat .ob{color:#fff;top:14px;left:14px;padding:10px 16px;border:3px solid #fff;border-radius:14px}
+.feat .ob b{font-family:Arial,Helvetica,sans-serif;font-size:1.8rem;font-weight:800;color:#fff}
+.feat .ob small{font-size:.85rem;color:#fff}
+.feat .fp{display:flex;flex-direction:column;align-items:flex-end;color:var(--plum);line-height:1.15}
+.feat .fp s{font-size:.95rem;font-weight:600;color:#3b2d47;text-decoration-thickness:2px}
+.feat .fp em{font-style:normal;font-size:1.5rem;font-weight:800;color:#d4183d}
 </style>
 </head>
 <body>
-<div class="top">Cash on delivery all over Pakistan</div>
+<div class="top" id="top">Cash on delivery all over Pakistan</div>
 <header><div class="wrap">
   <a class="logo" href="#">Climax Fashion Zone</a>
   <nav><a class="n" href="#shop">Shop</a><a class="n" href="#categories">Categories</a><a class="n" href="#how">How to order</a>
@@ -250,7 +260,7 @@ function renderFeatured(){
   if(!p){el.style.display="none";return}
   const im=p.images||[];el.dataset.open=0;
   el.innerHTML=(im[0]?'<span class="fm"><img src="'+im[0]+'" alt="'+esc(p.name)+'">'+offerBadge(p)+'</span>':"")+
-    '<div><b>'+esc(p.name)+'</b><span>'+money(price(p))+'</span></div>'+
+    '<div><b>'+esc(p.name)+'</b><span class="fp">'+(isSale(p)?'<s>'+money(p.oldPrice)+'</s>':"")+'<em>'+money(price(p))+'</em></span></div>'+
     (im.length>1?'<div class="fs">'+im.slice(1,5).map(s=>'<img src="'+s+'" alt="">').join("")+'</div>':"");
 }
 function renderTiles(){
@@ -384,6 +394,13 @@ $("#of").addEventListener("submit",async e=>{
   }
 });
 
+(function(){
+  const p=PRODUCTS.find(isSale),t=$("#top");
+  if(!p)return;
+  t.classList.add("offer");
+  const end=p.offerEnds?" | Offer ends "+new Date(p.offerEnds+"T12:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short"}):"";
+  t.innerHTML="<b>"+pct(p)+"% OFF</b> "+esc(p.name)+": now <b>"+money(p.price)+"</b> <s>"+money(p.oldPrice)+"</s>"+end+" | Cash on delivery";
+})();
 renderFeatured();renderTiles();renderChips();renderGrid();
 </script>
 </body>

@@ -30,6 +30,14 @@ button:disabled{opacity:.6;cursor:wait}
 .acts a{text-decoration:none;font-weight:700;font-size:.9rem;padding:7px 14px;border-radius:999px;background:var(--gold);color:var(--plum)}
 .acts a.w{background:#25d366;color:#fff}
 .acts{align-items:center}
+button{min-height:42px;line-height:1.2;white-space:nowrap}
+input:not([type=checkbox]){min-height:42px}
+select{border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit;background:#fff;min-height:42px;flex:1 1 auto}
+input.cod{min-height:34px}
+.btns button{flex:1 1 auto}
+.acts2{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.acts2 button{min-height:38px}
+.codl{white-space:nowrap}
 .acts button{padding:7px 14px;font-size:.9rem}
 .codl{display:flex;align-items:center;gap:6px;font-size:.88rem;color:var(--mute)}
 input.cod{flex:none;min-width:0;width:90px;padding:6px 8px}
@@ -39,16 +47,20 @@ input.sel{flex:none;min-width:0;width:18px;height:18px;padding:0}
 @media print{
   header,main{display:none!important}
   body{background:#fff}
-  #printArea{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
-  .lbl{border:2px solid #000;padding:6mm;color:#000;break-inside:avoid;page-break-inside:avoid;font-family:Arial,Helvetica,sans-serif}
-  .lcod{font-size:15pt;font-weight:800;border:2px solid #000;padding:2mm 3mm;margin-bottom:4mm;text-align:center}
-  .lt{font-size:9pt;font-weight:700;letter-spacing:.1em}
-  .ln{font-size:19pt;font-weight:800;line-height:1.15}
-  .lp{font-size:17pt;font-weight:800;margin:1mm 0 3mm}
-  .la{font-size:14pt;line-height:1.3}
-  .lc{font-size:17pt;font-weight:800;margin:2mm 0 4mm}
-  .lprod{font-size:10pt;border-top:1px dashed #000;padding-top:2mm}
-  .lf{font-size:8.5pt;margin-top:3mm}
+  #printArea{display:grid;gap:0;font-family:Arial,Helvetica,sans-serif;color:#000}
+  #printArea[data-size="a6"]{grid-template-columns:repeat(2,95mm);grid-auto-rows:138mm;font-size:13pt}
+  #printArea[data-size="a5"]{grid-template-columns:190mm;grid-auto-rows:138mm;font-size:13pt}
+  .lbl{border:1px dashed #000;padding:4mm 5mm;overflow:hidden;box-sizing:border-box;break-inside:avoid;page-break-inside:avoid}
+  .lcod{border:2px solid #000;padding:1.5mm 2mm;margin-bottom:3mm;text-align:center}
+  .lcl{font-size:.9em;font-weight:700;letter-spacing:.08em}
+  .lca{font-size:2.2em;font-weight:800;line-height:1.1}
+  .lt{font-size:.85em;font-weight:700;letter-spacing:.1em}
+  .ln{font-size:1.8em;font-weight:800;line-height:1.15}
+  .lp{font-size:1.6em;font-weight:800;margin:.5mm 0 2mm}
+  .la{font-size:1.25em;line-height:1.3}
+  .lc{font-size:1.6em;font-weight:800;margin:1.5mm 0 3mm}
+  .lprod{font-size:.95em;border-top:1px dashed #000;padding-top:1.5mm}
+  .lf{font-size:.8em;margin-top:2mm}
 }
 </style>
 </head>
@@ -61,12 +73,13 @@ input.sel{flex:none;min-width:0;width:18px;height:18px;padding:0}
   </form>
   <p class="msg" id="msg" role="status">Enter your secret code to see the orders.</p>
   <div id="tools" hidden>
-    <div class="bar"><input id="q" placeholder="Search name, phone or city" aria-label="Search orders"><button type="button" class="alt" id="re">Refresh</button><button type="button" class="alt" id="all">Select all</button><button type="button" id="prn">Print selected labels</button></div>
+    <div class="bar"><input id="q" placeholder="Search name, phone or city" aria-label="Search orders"></div>
+    <div class="bar btns"><button type="button" class="alt" id="re">Refresh</button><button type="button" class="alt" id="all">Select all</button><select id="sz" aria-label="Label size"><option value="a6" selected>Label: quarter A4 (A6, 4 per page)</option><option value="a5">Label: half A4 (A5, 2 per page)</option></select><button type="button" id="prn">Print selected labels (0)</button></div>
     <div class="sum" id="sum"></div>
   </div>
   <div id="list"></div>
-<div id="printArea"></div>
 </main>
+<div id="printArea"></div>
 <script>
 const ENDPOINT="https://script.google.com/macros/s/AKfycbzhSKDeXf1uvD0Ev5YHi6VwPas3UDcsBtpXmv4oEmbhGAtZlXVCajSH_bj9zPIpCYw/exec";
 let ROWS=[],HEAD=[],CODE="",ENTRIES=[];
@@ -76,18 +89,19 @@ function wa(p){let d=String(p).replace(/\D/g,"");if(d.startsWith("0"))d="92"+d.s
 function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
 function render(){
   const q=$("#q").value.trim().toLowerCase(),list=$("#list");list.textContent="";
-  const col=n=>HEAD.indexOf(n);
-  let shown=0,total=0;ENTRIES=[];
+    let shown=0,total=0;ENTRIES=[];updCount();
   ROWS.forEach(r=>{
-    const o={date:r[col("Date")],name:r[col("Name")],phone:r[col("Phone")],city:r[col("City")],addr:r[col("Address")],prod:r[col("Product")],note:r[col("Note")],qty:r[col("Qty")],tot:r[col("Total")],st:r[col("Status")]};
-    if(q&&!(String(o.name)+" "+o.phone+" "+o.city).toLowerCase().includes(q))return;
+    if(r[1]==="Name")return;
+    const o={date:r[0],name:r[1],phone:r[2],city:r[3],addr:r[4],prod:r[5],note:r[6],qty:r[7],tot:r[9],st:r[10]};
+    if(q&&!(String(o.name)+" "+o.phone+" "+o.city+" "+o.addr).toLowerCase().includes(q))return;
     shown++;total+=Number(o.tot)||0;
     const c=el("div","card"),t=el("div","top");
     t.append(el("b","",o.name||"(no name)"),el("span","",o.date?new Date(o.date).toLocaleString("en-GB"):""));
     c.append(t,
       el("div","row",o.prod+" x "+o.qty+"  |  "+money(o.tot)+(o.note?"  |  "+o.note:"")),
-      el("div","row",o.city+", "+o.addr),
-      el("div","row",o.phone));
+      el("div","row","City: "+(o.city||"-")),
+      el("div","row","Address: "+(o.addr||"(not given)")),
+      el("div","row","Phone: "+(o.phone||"-")));
     const a=el("div","acts"),call=el("a","","Call"),w=el("a","w","WhatsApp");
     call.href="tel:"+String(o.phone).replace(/[^\d+]/g,"");w.href=wa(o.phone);w.target="_blank";w.rel="noopener";
     a.append(call,w);
@@ -96,25 +110,26 @@ function render(){
     const codIn=document.createElement("input");codIn.type="number";codIn.min="0";codIn.className="cod";codIn.value=Number(o.tot)||0;codIn.setAttribute("aria-label","Cash to collect in rupees");
     const cl=el("label","codl","Cash to collect Rs");cl.append(codIn);
     const pb=el("button","alt","Print label");pb.type="button";
-    const entry={o,chk,codIn};ENTRIES.push(entry);
+    chk.addEventListener("change",updCount);const entry={o,chk,codIn};ENTRIES.push(entry);
     pb.addEventListener("click",()=>printLabels([entry]));
-    a.append(sl,cl,pb);c.append(a);list.append(c);
+    const a2=el("div","acts2");a2.append(sl,cl,pb);c.append(a,a2);list.append(c);
   });
   $("#sum").textContent="";
   $("#sum").append(el("span","","Orders: "+shown),el("span","","Total: "+money(total)));
   if(!shown)list.append(el("p","msg","No orders to show yet."));
 }
+function updCount(){$("#prn").textContent="Print selected labels ("+ENTRIES.filter(e=>e.chk.checked).length+")"}
 function printLabels(list){
   if(!list.length){alert("Select at least one order first.");return}
-  const area=$("#printArea");area.textContent="";
+  const area=$("#printArea");area.textContent="";area.dataset.size=$("#sz").value;
   list.forEach(({o,codIn})=>{
     const cod=Number(codIn.value)||0,l=el("div","lbl");
     l.append(
-      el("div","lcod",cod>0?"CASH ON DELIVERY: "+money(cod):"NO CASH TO COLLECT"),
+      cod>0?(()=>{const b=el("div","lcod");b.append(el("div","lcl","CASH ON DELIVERY"),el("div","lca",money(cod)));return b})():el("div","lcod","NO CASH TO COLLECT"),
       el("div","lt","DELIVER TO"),
       el("div","ln",o.name||""),
       el("div","lp",o.phone||""),
-      el("div","la",o.addr||""),
+      el("div","la",o.addr||"(address not given)"),
       el("div","lc",String(o.city||"").toUpperCase()),
       el("div","lprod",(o.prod||"")+" x "+(o.qty||1)),
       el("div","lf","FROM: Climax Fashion Zone, Muzaffarabad AJK | WhatsApp 0337 5940711"));
@@ -139,7 +154,7 @@ async function load(){
 }
 $("#f").addEventListener("submit",e=>{e.preventDefault();load()});
 $("#re").addEventListener("click",load);
-$("#all").addEventListener("click",()=>{const on=ENTRIES.some(e=>!e.chk.checked);ENTRIES.forEach(e=>e.chk.checked=on)});
+$("#all").addEventListener("click",()=>{const on=ENTRIES.some(e=>!e.chk.checked);ENTRIES.forEach(e=>e.chk.checked=on);updCount()});
 $("#prn").addEventListener("click",()=>printLabels(ENTRIES.filter(e=>e.chk.checked)));
 $("#q").addEventListener("input",render);
 </script>
